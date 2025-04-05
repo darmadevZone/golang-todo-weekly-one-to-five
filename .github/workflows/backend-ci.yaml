@@ -10,6 +10,14 @@ on:
 defaults:
   run:
     working-directory: ./
+env:
+  WORKING_DIRECTORY: ./
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+permissions:
+  checks: write
+  contents: read
+  pull-requests: write
 
 jobs:
   go-lint:
@@ -35,3 +43,4 @@ jobs:
         uses: golangci/golangci-lint-action@v6
         with:
           version: v1.60
+          # working-directory: ${{ env.WORKING_DIRECTORY }}
