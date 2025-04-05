@@ -1,0 +1,57 @@
+name: backend-ci
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+env:
+  WORKING_DIRECTORY: ./
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+permissions:
+  checks: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  go-lint:
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+    name: Go Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Golang
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ${{ env.WORKING_DIRECTORY }}/go.mod
+          cache: true
+          cache-dependency-path: |
+            **/go.sum
+            **/go.mod
+
+      - name: Install Dependencies
+        run: go mod download
+
+      # - name: Lint Code
+      #   uses: golangci/golangci-lint-action@v7
+      #   with:
+      #     working-directory: ${{ env.WORKING_DIRECTORY }}
+
+      - name: Run golangci-lint with Reviewdog
+        uses: reviewdog/action-golangci-lint@v2.8
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          go_version: 1.23
+          # reviewdog の動作モードの指定
+          reporter: github-pr-review
+          # Github Status へのレポートレベルの指定
+          level: warning
+          workdir: ${{ env.WORKING_DIRECTORY }}
+          golangci_lint_flags: "--config=.golangci.yaml"
