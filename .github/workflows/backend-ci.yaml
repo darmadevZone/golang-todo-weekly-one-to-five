@@ -39,10 +39,10 @@ jobs:
       - name: Install Dependencies
         run: go mod download
 
-      - name: Lint Code
-        uses: golangci/golangci-lint-action@v7
-        with:
-          working-directory: ${{ env.WORKING_DIRECTORY }}
+      # - name: Lint Code
+      #   uses: golangci/golangci-lint-action@v7
+      #   with:
+      #     working-directory: ${{ env.WORKING_DIRECTORY }}
 
       - name: Run golangci-lint with Reviewdog
         uses: reviewdog/action-golangci-lint@v2
