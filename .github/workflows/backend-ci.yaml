@@ -7,9 +7,6 @@ on:
   pull_request:
   workflow_dispatch:
 
-defaults:
-  run:
-    working-directory: ./
 env:
   WORKING_DIRECTORY: ./
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -21,6 +18,9 @@ permissions:
 
 jobs:
   go-lint:
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIRECTORY }}
     name: Go Lint
     runs-on: ubuntu-latest
     steps:
@@ -40,7 +40,6 @@ jobs:
         run: go mod download
 
       - name: Lint Code
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v7
         with:
-          version: v1.60
-          # working-directory: ${{ env.WORKING_DIRECTORY }}
+          working-directory: ${{ env.WORKING_DIRECTORY }}
